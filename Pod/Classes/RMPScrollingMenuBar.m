@@ -431,20 +431,6 @@
 
 - (void)scrollByRatio:(CGFloat)ratio from:(CGFloat)from {
     
-    NSLog(@"scrollByRatio %0.2f, %0.2f", ratio, _scrollView.contentOffset.x);
-    NSInteger index = [_items indexOfObject:_selectedItem];
-    CGFloat absRatio = ABS(ratio);
-
-    [_selectedItem setLineVIewAlpha:1.0-(absRatio*1.4 - 0.4)];
-    if (ratio > 0) {
-        RMPScrollingMenuBarItem *rightItem = _items[index + 1];
-        [rightItem setLineVIewAlpha:absRatio*1.4 - 0.4];
-    }else {
-        RMPScrollingMenuBarItem *leftItem = _items[index - 1];
-        [leftItem setLineVIewAlpha:absRatio*1.4 - 0.4];
-    }
-    
-    
     if(_style == RMPScrollingMenuBarStyleNormal){
         NSInteger index = [_items indexOfObject:_selectedItem];
         NSInteger ignoreCount = (NSInteger)(_scrollView.frame.size.width*0.5/(_scrollView.contentSize.width/_items.count));
@@ -460,6 +446,19 @@
         }else if(index == _items.count-1-ignoreCount && ratio > 0.0){
             return;
         }
+    }
+    
+    NSLog(@"scrollByRatio %0.2f, %0.2f", ratio, _scrollView.contentOffset.x);
+    NSInteger index = [_items indexOfObject:_selectedItem];
+    CGFloat absRatio = ABS(ratio);
+    
+    [_selectedItem setLineVIewAlpha:1.0-(absRatio*1.4 - 0.4)];
+    if (ratio > 0) {
+        RMPScrollingMenuBarItem *rightItem = _items[index + 1];
+        [rightItem setLineVIewAlpha:absRatio*1.4 - 0.4];
+    }else {
+        RMPScrollingMenuBarItem *leftItem = _items[index - 1];
+        [leftItem setLineVIewAlpha:absRatio*1.4 - 0.4];
     }
     
     _scrollView.contentOffset = CGPointMake(from + _scrollView.contentSize.width/_items.count*ratio, 0);

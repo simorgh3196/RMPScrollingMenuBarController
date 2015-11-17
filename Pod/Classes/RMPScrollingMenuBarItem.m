@@ -49,7 +49,7 @@
     if(self){
         _width = kRMPScrollingMenuBarItemDefaultWidth;
         _enabled = YES;
-        _lineWidth = 3;
+        _lineWidth = 4;
     }
     return self;
 }
@@ -57,7 +57,7 @@
 - (void)setupLineView
 {
     CGFloat margin = 4;
-    UIColor* lineColor = [UIColor blueColor];
+    UIColor* lineColor = [UIColor whiteColor];
     
     CGRect frame = CGRectMake(-margin, _itemButton.bounds.size.height+4 -_lineWidth,
                               _itemButton.bounds.size.width + margin*2, _lineWidth);
