@@ -41,6 +41,7 @@
 @property (nonatomic, assign, getter=isSelected)BOOL selected;
 
 @property (nonatomic, assign)UIView* lineView;
+@property (nonatomic, assign)CGFloat lineWidth;
 
 
 + (instancetype)item;

@@ -49,6 +49,7 @@
     if(self){
         _width = kRMPScrollingMenuBarItemDefaultWidth;
         _enabled = YES;
+        _lineWidth = 3;
     }
     return self;
 }
@@ -56,11 +57,10 @@
 - (void)setupLineView
 {
     CGFloat margin = 4;
-    CGFloat lineWidth = 3;
     UIColor* lineColor = [UIColor blueColor];
     
-    CGRect frame = CGRectMake(-margin, _itemButton.bounds.size.height+4 -lineWidth,
-                              _itemButton.bounds.size.width + margin*2, lineWidth);
+    CGRect frame = CGRectMake(-margin, _itemButton.bounds.size.height+4 -_lineWidth,
+                              _itemButton.bounds.size.width + margin*2, _lineWidth);
     UIView* lineView = [[UIView alloc] initWithFrame:frame];
     lineView.backgroundColor = lineColor;
     lineView.alpha = 0;
@@ -122,6 +122,15 @@
 - (void)setLineVIewAlpha:(CGFloat)alpha
 {
     _lineView.alpha = alpha;
+}
+
+- (void)setLineViewWidth:(CGFloat)width
+{
+    _lineWidth = width;
+    CGRect frame = _lineView.frame;
+    frame.size.height = width;
+    _lineView.frame = frame;
+    [_lineView sizeToFit];
 }
 
 - (NSString*)description
