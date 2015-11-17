@@ -27,7 +27,7 @@
 + (instancetype)button
 {
     RMPScrollingMenuBarButton* button = [self buttonWithType:UIButtonTypeCustom];
-
+    
     return button;
 }
 
@@ -53,6 +53,22 @@
     return self;
 }
 
+- (void)setupLineView
+{
+    CGFloat margin = 4;
+    CGFloat lineWidth = 3;
+    UIColor* lineColor = [UIColor blueColor];
+    
+    CGRect frame = CGRectMake(-margin, _itemButton.bounds.size.height+4 -lineWidth,
+                              _itemButton.bounds.size.width + margin*2, lineWidth);
+    UIView* lineView = [[UIView alloc] initWithFrame:frame];
+    lineView.backgroundColor = lineColor;
+    lineView.alpha = 0;
+    
+    _lineView = lineView;
+    [_itemButton addSubview:_lineView];
+}
+
 - (RMPScrollingMenuBarButton*)button
 {
     if(!_itemButton){
@@ -73,6 +89,8 @@
         _itemButton.enabled = _enabled;
         _itemButton.exclusiveTouch = NO;
         [_itemButton sizeToFit];
+        
+        [self setupLineView];
     }
     return _itemButton;
 }
@@ -99,6 +117,11 @@
 {
     _selected = selected;
     _itemButton.selected = selected;
+}
+
+- (void)setLineVIewAlpha:(CGFloat)alpha
+{
+    _lineView.alpha = alpha;
 }
 
 - (NSString*)description

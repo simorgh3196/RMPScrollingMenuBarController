@@ -74,7 +74,7 @@ typedef NS_ENUM(NSInteger, RMPMenuBarControllerDirection){
 
 /** Container view for presenting view of child view controller.
  */
-@property (nonatomic, readonly)UIView*      containerView;
+@property (nonatomic, readonly)UIView* containerView;
 
 /** NSArray of child view controllers.
  */
@@ -86,7 +86,7 @@ typedef NS_ENUM(NSInteger, RMPMenuBarControllerDirection){
 
 /** Index of selected view controller.
  */
-@property (nonatomic, assign)NSInteger       selectedIndex;
+@property (nonatomic, assign)NSInteger selectedIndex;
 
 /** Delegate object.
  */

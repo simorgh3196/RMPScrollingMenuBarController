@@ -40,8 +40,12 @@
 @property (nonatomic, assign, getter=isEnabled)BOOL enabled;
 @property (nonatomic, assign, getter=isSelected)BOOL selected;
 
+@property (nonatomic, assign)UIView* lineView;
+
+
 + (instancetype)item;
 
 - (RMPScrollingMenuBarButton*)button;
+- (void)setLineVIewAlpha:(CGFloat)alpha;
 
 @end

@@ -107,6 +107,11 @@
 
     CGFloat lineWidth = 1.0f/[[UIScreen mainScreen] scale];
     _border.frame = CGRectMake(0, self.bounds.size.height - lineWidth, self.bounds.size.width, lineWidth);
+    
+    NSInteger index = [_items indexOfObject:_selectedItem];
+    
+    [self setItems:_items];
+    [self setSelectedItem:_items[index]];
 }
 
 - (UIView*)hitTest:(CGPoint)point withEvent:(UIEvent *)event
@@ -130,6 +135,8 @@
     _barHeight = kRMPMenuBarDefaultBarHeight;
     _itemInsets = UIEdgeInsetsZero;
     _indicatorColor = [UIColor colorWithRed:0.988 green:0.224 blue:0.129 alpha:1.000];
+    _indicatorWidth = 2;
+    _indicatorBottomInset = 0;
 
     RMPScrollingMenuBarScrollView* scrollView = [[RMPScrollingMenuBarScrollView alloc] initWithFrame:self.bounds];
     _scrollView = scrollView;
@@ -139,7 +146,9 @@
     _scrollView.scrollsToTop = NO;
     [self addSubview:_scrollView];
 
-    UIView* indicator = [[UIView alloc] initWithFrame:CGRectMake(0, self.bounds.size.height - 4, 0, 2)];
+    UIView* indicator = [[UIView alloc] initWithFrame:
+                         CGRectMake(0, self.bounds.size.height - _indicatorWidth + _indicatorBottomInset,
+                                    0, _indicatorWidth)];
     _indicatorView = indicator;
     _indicatorView.backgroundColor = _indicatorColor;
     [_scrollView addSubview:_indicatorView];
@@ -147,7 +156,7 @@
     UIView* border = [[UIView alloc] initWithFrame:CGRectMake(0, self.bounds.size.height - 0.25f, self.bounds.size.width, 0.25f)];
     _border = border;
     _border.backgroundColor = [UIColor colorWithWhite:0.698 alpha:1.000];
-    [self addSubview:_border];
+//    [self addSubview:_border];
 }
 
 - (void)setStyle:(RMPScrollingMenuBarStyle)style
@@ -196,13 +205,47 @@
     _scrollView.delegate = nil;
     
     // Set up button of menu items.
-    CGFloat offset = _itemInsets.left;
-    for(RMPScrollingMenuBarItem* item in _items){
+//    CGFloat offset = _itemInsets.left + _scrollView.bounds.size.width/2;
+//    for(RMPScrollingMenuBarItem* item in _items){
+//        RMPScrollingMenuBarButton* view = [item button];
+//        if(view){
+//            f = CGRectMake(offset, _itemInsets.top, item.width,
+//                           _scrollView.bounds.size.height-_itemInsets.top + _itemInsets.bottom);
+//            offset += f.size.width + _itemInsets.right + _itemInsets.left;
+//            view.frame = f;
+//            view.alpha = 0.0;
+//            [_scrollView addSubview:view];
+//            
+//            [(RMPScrollingMenuBarButton*)view addTarget:self
+//                                                 action:@selector(didTapMenuButton:)
+//                                       forControlEvents:UIControlEventTouchUpInside];
+//            
+//        }
+//    }
+    
+    CGFloat offset = _scrollView.bounds.size.width/2;
+    for (NSInteger i = 0; i < _items.count; i++) {
+        RMPScrollingMenuBarItem* item = _items[i];
         RMPScrollingMenuBarButton* view = [item button];
         if(view){
+            
+            // hack
+            NSLog(@"width: %f", view.bounds.size.width);
+            CGFloat hackInset = (_scrollView.bounds.size.width/2 - view.bounds.size.width)/2;
+            _itemInsets.left = _itemInsets.right = hackInset;
+            
+            if (i == 0) {
+                offset -= view.bounds.size.width/2;
+            }
+            
             f = CGRectMake(offset, _itemInsets.top, item.width,
-                           _scrollView.bounds.size.height-_itemInsets.top + _itemInsets.bottom);
+                           _scrollView.bounds.size.height - _itemInsets.top + _itemInsets.bottom);
             offset += f.size.width + _itemInsets.right + _itemInsets.left;
+            
+            if (i == _items.count-1){
+                offset += _scrollView.bounds.size.width/2 - view.bounds.size.width/2 - _itemInsets.right;
+            }
+            
             view.frame = f;
             view.alpha = 0.0;
             [_scrollView addSubview:view];
@@ -248,7 +291,7 @@
     }
     
     if(!_selectedItem && _items.count > 0){
-        [self setSelectedItem:_items[0]];
+//        [self setSelectedItem:_items[0]];
     }
 }
 
@@ -387,6 +430,21 @@
 }
 
 - (void)scrollByRatio:(CGFloat)ratio from:(CGFloat)from {
+    
+    NSLog(@"scrollByRatio %0.2f, %0.2f", ratio, _scrollView.contentOffset.x);
+    NSInteger index = [_items indexOfObject:_selectedItem];
+    CGFloat absRatio = ABS(ratio);
+
+    [_selectedItem setLineVIewAlpha:1.0-(absRatio*1.4 - 0.4)];
+    if (ratio > 0) {
+        RMPScrollingMenuBarItem *rightItem = _items[index + 1];
+        [rightItem setLineVIewAlpha:absRatio*1.4 - 0.4];
+    }else {
+        RMPScrollingMenuBarItem *leftItem = _items[index - 1];
+        [leftItem setLineVIewAlpha:absRatio*1.4 - 0.4];
+    }
+    
+    
     if(_style == RMPScrollingMenuBarStyleNormal){
         NSInteger index = [_items indexOfObject:_selectedItem];
         NSInteger ignoreCount = (NSInteger)(_scrollView.frame.size.width*0.5/(_scrollView.contentSize.width/_items.count));
@@ -405,7 +463,7 @@
     }
     
     _scrollView.contentOffset = CGPointMake(from + _scrollView.contentSize.width/_items.count*ratio, 0);
-    NSLog(@"scrollByRatio %0.2f, %0.2f", ratio, _scrollView.contentOffset.x);
+//    NSLog(@"scrollByRatio %0.2f, %0.2f", ratio, _scrollView.contentOffset.x);
 }
 
 - (void)setSelectedItem:(RMPScrollingMenuBarItem *)selectedItem
@@ -415,7 +473,7 @@
 
 - (void)setSelectedItem:(RMPScrollingMenuBarItem *)selectedItem animated:(BOOL)animated
 {
-    if(_selectedItem == selectedItem)return;
+//    if(_selectedItem == selectedItem)return;
     
     self.userInteractionEnabled = NO;
     
@@ -442,6 +500,7 @@
         }
     }
     
+    RMPScrollingMenuBarItem *oldItem = _selectedItem;
     _selectedItem = selectedItem;
     _selectedItem.selected = YES;
     
@@ -481,22 +540,27 @@
             dur = 0.6;
         }
         
-        [UIView animateWithDuration:dur
-                              delay:0.16
-             usingSpringWithDamping:0.8
-              initialSpringVelocity:0.1
-                            options:UIViewAnimationOptionCurveEaseInOut
-                         animations:^{
-                             CGRect f = _indicatorView.frame;
-                             f.origin.x = newPosition.x - 3;
-                             f.size.width = _selectedItem.button.frame.size.width + 6;
-                             _indicatorView.frame = f;
-                         } completion:^(BOOL finished) {
-                             self.userInteractionEnabled = YES;
-                             if([_delegate respondsToSelector:@selector(menuBar:didSelectItem:direction:)]){
-                                 [_delegate menuBar:self didSelectItem:_selectedItem direction:direction];
-                             }
-                         }];
+//        [UIView animateWithDuration:dur
+//                              delay:0.16
+//             usingSpringWithDamping:0.8
+//              initialSpringVelocity:0.1
+//                            options:UIViewAnimationOptionCurveEaseInOut
+//                         animations:^{
+//                             CGRect f = _indicatorView.frame;
+//                             f.origin.x = newPosition.x - 3;
+//                             f.size.width = _selectedItem.button.frame.size.width + 6;
+//                             _indicatorView.frame = f;
+//                         } completion:^(BOOL finished) {
+//                             self.userInteractionEnabled = YES;
+//                             if([_delegate respondsToSelector:@selector(menuBar:didSelectItem:direction:)]){
+//                                 [_delegate menuBar:self didSelectItem:_selectedItem direction:direction];
+//                             }
+//                         }];
+
+        [UIView animateWithDuration:0.5 animations:^{
+            oldItem.lineView.alpha = 0;
+            _selectedItem.lineView.alpha = 1;
+        }];
     }else if(_style == RMPScrollingMenuBarStyleInfinitePaging){
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self reorderItemsForInfinitePaging];
@@ -507,11 +571,14 @@
             _indicatorView.frame = f;
             
             self.userInteractionEnabled = YES;
-            if([_delegate respondsToSelector:@selector(menuBar:didSelectItem:direction:)]){
-                [_delegate menuBar:self didSelectItem:_selectedItem direction:direction];
-            }
+//            if([_delegate respondsToSelector:@selector(menuBar:didSelectItem:direction:)]){
+//                [_delegate menuBar:self didSelectItem:_selectedItem direction:direction];
+//            }
             _infinitePagingIsTappedItem = NO;
         });
+    }
+    if([_delegate respondsToSelector:@selector(menuBar:didSelectItem:direction:)]){
+        [_delegate menuBar:self didSelectItem:_selectedItem direction:direction];
     }
 }
 
@@ -542,6 +609,19 @@
     _showsSeparatorLine = showsSeparatorLine;
     _border.hidden = !_showsSeparatorLine;
 }
+
+-(void)setIndicatorWidth:(CGFloat)indicatorWidth
+{
+    _indicatorWidth = indicatorWidth;
+    [self layoutIfNeeded];
+}
+
+-(void)setIndicatorBottomInset:(CGFloat)indicatorBottomInset
+{
+    _indicatorBottomInset = indicatorBottomInset;
+    [self layoutIfNeeded];
+}
+
 
 #pragma mark - button action
 - (void)didTapMenuButton:(id)sender
