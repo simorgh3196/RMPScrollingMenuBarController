@@ -20,7 +20,8 @@ Pod::Spec.new do |s|
   s.screenshots      = "https://raw.githubusercontent.com/recruit-mp/RMPScrollingMenuBarController/master/docs/rmpscrollingmenubarcontroller.gif"
   s.license          = 'MIT'
   s.author           = { "kato" => "yoshihiro@sputnik-apps.com", "Recruit Marketing Partners Co.,Ltd." => "recruit_mp_oss@ml.cocorou.jp" }
-  s.source           = { :git => "https://github.com/recruit-mp/RMPScrollingMenuBarController.git", :tag => s.version.to_s }
+  # s.source           = { :git => "https://github.com/recruit-mp/RMPScrollingMenuBarController.git", :tag => s.version.to_s }
+  s.source           = { :git => "https://github.com/simorgh3196/RMPScrollingMenuBarController.git", :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.platform     = :ios, '7.0'
