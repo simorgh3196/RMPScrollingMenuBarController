@@ -230,7 +230,7 @@
         if(view){
             
             // hack
-            NSLog(@"width: %f", view.bounds.size.width);
+//            NSLog(@"width: %f", view.bounds.size.width);
             CGFloat hackInset = (_scrollView.bounds.size.width/2 - view.bounds.size.width)/2;
             _itemInsets.left = _itemInsets.right = hackInset;
             
@@ -448,7 +448,7 @@
         }
     }
     
-    NSLog(@"scrollByRatio %0.2f, %0.2f", ratio, _scrollView.contentOffset.x);
+//    NSLog(@"scrollByRatio %0.2f, %0.2f", ratio, _scrollView.contentOffset.x);
     NSInteger index = [_items indexOfObject:_selectedItem];
     CGFloat absRatio = ABS(ratio);
     
